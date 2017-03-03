@@ -41,13 +41,10 @@ $(BINS) : % : %.c
 # Run test scripts, create %.test.out files and compare to %.test.ref references
 $(TESTOUTS) : %.test.out : %.test $(BINS) FORCE
 	@$(eval TESTCOUNT=$(shell echo $$(($(TESTCOUNT)+1))))
-	@$(shell ./$< > $@ 2>&1)
-	@diff $<.ref $@ >/dev/null; \
-          if [ $$? -eq 0 ]; \
-            then printf '$(PASSED) Test $<\n'; \
-            else printf '$(FAILED) Test $<, Compare $<.ref $@\n'; \
-	    exit 0; \
-          fi
+	@echo -n $<
+	@./$< > $@ 2>&1
+	@diff $<.ref $@
+	@printf ' $(PASSED)\n'
 
 clean:
 	@rm -f $(BINS) $(TESTOUTS)
